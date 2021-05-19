@@ -1,7 +1,9 @@
 "use strict";
 
 const express = require('express');
+const multer = require('multer');
 const app = express();
+app.use(multer().none());
 
 app.get('/hello', (request, response) => {
   console.log("Accessed hello");
