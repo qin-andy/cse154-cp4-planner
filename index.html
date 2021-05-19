@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<!--
+  ***
+  Name: Andy Qin
+  Date: 5.5.2021
+  Section: CSE 154 AE
+
+  This is the html file for the core planner page. It sets up the
+  structure for the to-do list with input fields and contains a few
+  example tasks.
+  ***
+-->
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="styles.css">
+  <script src="index.js"></script>
+  <title>CP3</title>
+</head>
+
+<body>
+  <header>
+    <h1>CP3</h1>
+  </header>
+  <main>
+    <section id="task-manager">
+      <h2>
+        Select Task Type:
+      </h2>
+      <select id="task-type">
+        <option value="random">Random</option>
+        <option value="custom">Custom</option>
+      </select>
+      <article id="custom-add" class="hidden">
+        <h3>
+          Add Custom Task
+        </h3>
+        <p>Task Name: <input id="task-name"></p>
+        <p>Task Description: <input id="task-desc"></p>
+      </article>
+      <article id="random-add">
+        <h3>
+          Add Random Task
+        </h3>
+        <p>Max Difficulty:</p>
+        <p>
+          Easy
+          <input type="range" min="0" max="10" id="difficulty-slider" class="slider">
+          Hard
+        </p>
+        <p>Max Price:</p>
+        <p>
+          Free
+          <input type="range" min="0" max="10" id="price-slider" class="slider">
+          Pricey
+        </p>
+        <p>Category:
+          <select id="category">
+            <option value="any">Any</option>
+            <option value="education">Education</option>
+            <option value="recreational">Recreational</option>
+            <option value="social">Social</option>
+            <option value="diy">DIY</option>
+            <option value="charity">Charity</option>
+            <option value="cooking">Cooking</option>
+            <option value="relaxation">Relaxation</option>
+            <option value="music">Music</option>
+            <option value="busywork">Busywork</option>
+          </select>
+        </p>
+      </article>
+      <p>Day:
+        <select id="day-of-week">
+          <option value="monday">Monday</option>
+          <option value="tuesday">Tuesday</option>
+          <option value="wednesday">Wednesday</option>
+          <option value="thursday">Thursday</option>
+          <option value="friday">Friday</option>
+          <option value="saturday">Saturday</option>
+          <option value="sunday">Sunday</option>
+        </select>
+      </p>
+      <p>
+        <button id="task-submit">Submit</button>
+      </p>
+    </section>
+    <section id="status-box" class="hidden">
+      <h2>ERROR</h2>
+      <p>Error Description</p>
+    </section>
+    <section class="days-container">
+      <div id="monday">
+        <h2>
+          Monday
+        </h2>
+      </div>
+      <div id="tuesday">
+        <h2>
+          Tuesday
+        </h2>
+      </div>
+      <div id="wednesday">
+        <h2>
+          Wednesday
+        </h2>
+      </div>
+      <div id="thursday">
+        <h2>
+          Thursday
+        </h2>
+      </div>
+      <div id="friday">
+        <h2>
+          Friday
+        </h2>
+      </div>
+      <div id="saturday">
+        <h2>
+          Saturday
+        </h2>
+      </div>
+      <div id="sunday">
+        <h2>
+          Sunday
+        </h2>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <p>Website made by Andy Qin</p>
+    <p>Random items use <a href="https://www.boredapi.com/">BoredAPI</a> to generate tasks</p>
+  </footer>
+</body>
+</html>

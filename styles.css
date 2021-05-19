@@ -1,0 +1,101 @@
+/*
+  Name: Andy Qin
+  Date: 5.5.2021
+  Section: CSE 154 AE
+
+  The styles file for the plain and simple planner linked by index.html.
+  Creates a gray color pallete to evoke images of a deep ashen volcano,
+  or perhaps dusty ocean waves lapping against the shores of an ancient,
+  crumbling kingdom. Uses large element sizes to improve readability.
+*/
+body {
+  font-family: "Arial", "Helvetica", sans-serif;
+  text-align: center;
+}
+
+footer {
+  padding: 10px;
+}
+
+select, input, button {
+  width: 150px;
+  height: 30px;
+  font-size: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+.days-container {
+  justify-content: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin: 50px;
+  padding: 5px;
+}
+
+.days-container > div {
+  justify-content: flex-start;
+  flex-direction: column;
+  background-color: #BBB;
+  margin: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  width: 18vw;
+  font-size: 16px;
+}
+
+.days-container, .days-container > div {
+  display: flex;
+}
+
+.completed {
+  text-decoration: line-through;
+}
+
+.task, .completed {
+  font-size: 20px;
+  margin: 6px;
+  padding-bottom: 5px;
+}
+
+.task:hover, .completed:hover, body, footer {
+  background-color: #DDD;
+}
+
+.task h3, .completed h3 {
+  text-transform: uppercase;
+  padding: 6px;
+  margin: 3px;
+}
+
+.task p, .completed p {
+  font-style: italic;
+  margin: 4px;
+}
+
+.slider {
+  width: 300px;
+}
+
+#status-box {
+  background-color: red;
+  margin-left: 30vw;
+  margin-right: 30vw;
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+  padding: 30px;
+  font-size: 20px;
+}
+
+#task-manager {
+  margin: auto;
+  padding: 6px;
+  width: 36vw;
+  font-size: 22px;
+}
+
+#task-manager, .task, .completed, .days-container, footer {
+  background-color: #CCC;
+}
