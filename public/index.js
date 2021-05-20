@@ -36,15 +36,12 @@
   }
 
   /**
-   * Adds a new task using the task manager's text inputs as fields. Disables
-   * the submit button until task addition is finished.
+   * Adds a new task using the task manager's text inputs as fields.
    */
   function addTask() {
-    toggleSubmit();
     let name = id("task-name").value;
     if (!name && !isRandomTask()) {
       displayStatusBox("Task name cannot be empty!", 3000);
-      setTimeout(toggleSubmit, 3000);
     } else if (isRandomTask()) {
       let maxDifficulty = id("difficulty-slider").value;
       let maxPrice = id("price-slider").value;
@@ -53,9 +50,30 @@
     } else {
       let desc = id("task-desc").value;
       let day = getDay();
-      buildCustomTask(name, desc, day);
-      toggleSubmit();
+      //buildCustomTask(name, desc, day);
+      postCustomTask(name, desc, day);
     }
+  }
+
+  function postCustomTask(name, desc, day) {
+    let params = new FormData();
+    params.append("name", name);
+    params.append("desc", desc);
+    params.append("day", day);
+
+    fetch("/tasks/add", { method: "POST", body: params })
+      .then(statusCheck)
+      .then(res => res.json())
+      .then(updateView)
+      .catch(handleError);
+  }
+
+  function updateView(json) {
+
+  }
+
+  function clearAllTasks() {
+
   }
 
   /**
@@ -123,7 +141,7 @@
    * @param {*} maxPrice - the max price, selects an activity in the range of 0 to max
    */
   function makeActivityRequest(category, maxDifficulty, maxPrice) {
-    const url = "http://www.boredapi.com/api/activity/" +
+    const url = "http://www.boredapi.com/api/activity/" + // TOOD: constant this?
       "?minaccessibility=0" +
       "&maxaccessibility=" + maxDifficulty +
       "&type=" + category +
@@ -146,14 +164,13 @@
 
   /**
    * Takes a response JSON from the BoredAPI request and builds a new task
-   * based on its contents. Reenables the submit button as well.
+   * based on its contents.
    * @param {JSON} respJson - the reponse from the API
    */
   function processActivityJson(respJson) {
     let name = respJson.activity;
     let desc = respJson.type;
     buildCustomTask(name, desc, getDay());
-    setTimeout(toggleSubmit, 500);
   }
 
   /**
@@ -163,7 +180,6 @@
    */
   function handleError(err) {
     displayStatusBox(err, 3000);
-    setTimeout(toggleSubmit, 3000);
   }
 
   /**
@@ -180,16 +196,6 @@
   /** Toggles the status box visibility */
   function toggleStatusBox() {
     id("status-box").classList.toggle("hidden");
-  }
-
-  /** Toggles the submit button's enable/disable */
-  function toggleSubmit() {
-    id("task-submit").disabled = !id("task-submit").disabled;
-  }
-
-  /** Removes a task from the task list */
-  function clearTask() {
-    this.parentNode.remove();
   }
 
   /** Toggles a task's "completed" status */
