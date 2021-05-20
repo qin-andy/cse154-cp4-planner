@@ -11,14 +11,16 @@
 
 "use strict";
 
-(function() {
+(function () {
   window.addEventListener("load", init);
+  let allTasks = [];
 
-  /** Initilizes task manager event listesners and adds demo tasks */
+  /** Initilizes task manager event listesners and loads tasks from the server */
   function init() {
     id("task-submit").addEventListener("click", addTask);
     id("task-type").addEventListener("change", toggleTaskType);
-    addDemoTasks();
+    id("clear-all").addEventListener("click", clearServerTasks);
+    refreshPlanner();
   }
 
   /** Toggles the type of task manager panel's task type, either custom or random */
@@ -46,13 +48,18 @@
       let maxDifficulty = id("difficulty-slider").value;
       let maxPrice = id("price-slider").value;
       let category = id("category").value;
-      buildRandomTask(category, maxDifficulty, maxPrice);
+      postRandomTask(category, maxDifficulty, maxPrice);
     } else {
       let desc = id("task-desc").value;
       let day = getDay();
-      //buildCustomTask(name, desc, day);
       postCustomTask(name, desc, day);
     }
+  }
+
+  function clearServerTasks() {
+    fetch("/tasks/clearall")
+      .then(updateView)
+      .catch(handleError);
   }
 
   function postCustomTask(name, desc, day) {
@@ -68,13 +75,30 @@
       .catch(handleError);
   }
 
+  function refreshPlanner() {
+    fetch("/tasks/get")
+      .then(statusCheck)
+      .then(res => res.json())
+      .then(updateView)
+      .catch(handleError);
+  }
+
   function updateView(json) {
-
+    clearTaskView();
+    for (let i = 0; i < json.tasks.length; i++) {
+      let name = json.tasks[i].name;
+      let desc = json.tasks[i].desc;
+      let day = json.tasks[i].day;
+      buildCustomTask(name, desc, day);
+    }
   }
 
-  function clearAllTasks() {
-
+  function clearTaskView() {
+    for (let i = 0; i < allTasks.length; i++) {
+      allTasks[i].remove();
+    }
   }
+
 
   /**
    * Builds the structure in the DOM for a new task in HTML.
@@ -99,11 +123,8 @@
     checkButton.addEventListener("click", toggleCheck);
     newTask.appendChild(checkButton);
 
-    let clearButton = gen("button");
-    clearButton.textContent = "clear";
-    clearButton.addEventListener("click", clearTask);
-    newTask.appendChild(clearButton);
     id(day).appendChild(newTask);
+    allTasks.push(newTask);
   }
 
   /**
@@ -124,7 +145,7 @@
    * @param {*} maxDifficulty - the max difficulty factor for the task, from 1-10
    * @param {*} maxPrice - the max price range for the task, from 1-10
    */
-  function buildRandomTask(category, maxDifficulty, maxPrice) {
+  function postRandomTask(category, maxDifficulty, maxPrice) {
     maxDifficulty /= 10;
     maxPrice /= 10;
     if (category === "any") {
@@ -170,7 +191,7 @@
   function processActivityJson(respJson) {
     let name = respJson.activity;
     let desc = respJson.type;
-    buildCustomTask(name, desc, getDay());
+    postCustomTask(name, desc, getDay());
   }
 
   /**
@@ -201,13 +222,6 @@
   /** Toggles a task's "completed" status */
   function toggleCheck() {
     this.parentNode.classList.toggle("completed");
-  }
-
-  /** Adds a set of demo tasks to the list to showcase functionality */
-  function addDemoTasks() {
-    buildCustomTask("Do Laundry", "Try removing this task using the clear button!", "monday");
-    buildCustomTask("Clean Fishtank", "Toggle this task with the check button!", "thursday");
-    buildCustomTask("Baseball Game", "Use the dropdown menu to specify a task date!", "sunday");
   }
 
   /**

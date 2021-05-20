@@ -10,10 +10,24 @@ app.use(express.urlencoded({ extended: true })) // for application/x-www-form-ur
 app.use(express.json()); // for application/json
 app.use(multer().none()); // for multipart/form-data (required with FormData)
 
-app.get('/hello', async (request, response) => {
-  let name = request.query['name'];
-  response.type("text");
-  response.send("Hello, " + name);
+app.get('/tasks/get', async (request, response) => {
+  try {
+    let planner = await readPlanner();
+    response.json(planner);
+  } catch (err) {
+    console.log(err);
+  }
+})
+
+app.get('/tasks/clearall', async (request, response) => {
+  try {
+    let planner = await readPlanner()
+    planner.tasks = [];
+    await fs.writeFile("planner.txt", JSON.stringify(planner))
+    response.json(planner);
+  } catch (err) {
+    console.log(err);
+  }
 })
 
 app.post('/tasks/add', async (request, response) => {
@@ -36,10 +50,7 @@ async function addTask(name, desc, day) {
   task['day'] = day;
   try {
     let planner = await readPlanner();
-    console.log(planner.tasks);
-    console.log(task);
     planner.tasks.push(task);
-    console.log(planner);
     await fs.writeFile("planner.txt", JSON.stringify(planner));
     return planner;
   } catch (err) {
