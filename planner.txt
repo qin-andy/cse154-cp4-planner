@@ -1,1 +1,1 @@
-{"idCounter":6,"tasks":[{"name":"Watch a movie you'd never usually watch","desc":"relaxation","day":"monday","uid":0},{"name":"Try a food you don't like","desc":"recreational","day":"monday","uid":5}]}
+{"idCounter":0,"tasks":[]}

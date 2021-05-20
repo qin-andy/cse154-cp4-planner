@@ -37,14 +37,20 @@ app.get('/tasks/clear', async (request, response) => {
     let uid = request.query.uid * 1;
     console.log(uid);
     let planner = await readPlanner()
+    let oldLength = planner.tasks.length;
     for (let i = 0; i < planner.tasks.length; i++) {
       if (planner.tasks[i].uid === uid) {
         console.log(planner.tasks[i]);
         planner.tasks.splice(i, 1);
+        i -= 1;
       }
     }
-    await writePlanner(planner);
-    response.json(planner);
+    if (oldLength === planner.tasks.length) {
+      response.status(400).send("Error: uid not found");
+    } else {
+      await writePlanner(planner);
+      response.json(planner);
+    }
   } catch (err) {
     console.log(err);
   }
@@ -67,11 +73,16 @@ app.post('/tasks/add', async (request, response) => {
   let name = request.body.name;
   let desc = request.body.desc;
   let day = request.body.day;
-  try {
-    let planner = await addTask(name, desc, day);
-    response.json(planner);
-  } catch (err) {
-    console.log(err);
+
+  if (!(name && desc && day)) {
+    response.status(400).send("Error: missing name, desc, and/or day queries");
+  } else {
+    try {
+      let planner = await addTask(name, desc, day);
+      response.json(planner);
+    } catch (err) {
+      console.log(err);
+    }
   }
 })
 

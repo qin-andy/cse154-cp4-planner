@@ -43,9 +43,9 @@
    */
   function addTask() {
     let name = id("task-name").value;
-    if (!name && !isRandomTask()) {
+    /* if (!name && !isRandomTask()) {
       displayStatusBox("Task name cannot be empty!", 3000);
-    } else if (isRandomTask()) {
+    } else */ if (isRandomTask()) {
       let maxDifficulty = id("difficulty-slider").value;
       let maxPrice = id("price-slider").value;
       let category = id("category").value;
@@ -235,7 +235,7 @@
    * @param {error} err - the error thrown
    */
   function handleError(err) {
-    displayStatusBox(err, 3000);
+    displayStatusBox(err, 4000);
   }
 
   /**
@@ -244,10 +244,17 @@
    * @param {int} time - the number of milliseconds to display the status box
    */
   function displayStatusBox(text, time) {
-    id("status-box").lastChild.textContent = text;
+    id("status-box").lastChild.previousSibling.textContent = text;
+    toggleSubmit();
     toggleStatusBox();
     setTimeout(toggleStatusBox, time);
+    setTimeout(toggleSubmit, time);
   }
+
+  /** Toggles the submit button's enable/disable */
+    function toggleSubmit() {
+      id("task-submit").disabled = !id("task-submit").disabled;
+    }
 
   /** Toggles the status box visibility */
   function toggleStatusBox() {
