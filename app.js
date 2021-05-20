@@ -6,10 +6,9 @@ const fs = require('fs').promises;
 const app = express();
 
 /* Include middlewares for handling POST requests */
-app.use(express.urlencoded({ extended: true })) // for application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true })); // for application/x-www-form-urlencoded
 app.use(express.json()); // for application/json
 app.use(multer().none()); // for multipart/form-data (required with FormData)
-
 
 /** Endpoint to get the full planner file as a JSON */
 app.get('/planner', async (request, response) => {
@@ -34,7 +33,7 @@ app.get('/list', async (request, response) => {
   } catch (err) {
     response.status(500).send(err);
   }
-})
+});
 
 /**
  * Endpoint to clear a specific task in the planner by uid
@@ -43,7 +42,7 @@ app.get('/list', async (request, response) => {
 app.get('/tasks/clear/:uid', async (request, response) => {
   try {
     let uid = Number.parseInt(request.params.uid);
-    let planner = await readPlanner()
+    let planner = await readPlanner();
     let oldLength = planner.tasks.length;
     for (let i = 0; i < planner.tasks.length; i++) {
       if (planner.tasks[i].uid === uid) {
@@ -60,12 +59,12 @@ app.get('/tasks/clear/:uid', async (request, response) => {
   } catch (err) {
     response.status(500).send(err);
   }
-})
+});
 
 /** Endpoint to clears all tasks from the planner file */
 app.get('/tasks/clearall', async (request, response) => {
   try {
-    let planner = await readPlanner()
+    let planner = await readPlanner();
     planner.tasks = [];
     planner.idCounter = 0;
     await writePlanner(planner);
@@ -73,7 +72,7 @@ app.get('/tasks/clearall', async (request, response) => {
   } catch (err) {
     response.status(500).send(err);
   }
-})
+});
 
 /**
  * Endpoint to add a specific tsak with the name, desc, and day paramters in the body
@@ -94,14 +93,14 @@ app.post('/tasks/add', async (request, response) => {
       response.status(500).send(err);
     }
   }
-})
+});
 
 /**
  * Reads and writes the planner file to include this new task, returns it as a JSON
  * @param {string} name - the task name
  * @param {string} desc - the task description
  * @param {string} day - the task day of week
- * @returns - a json file of the updated planner
+ * @returns {json} - a json file of the updated planner
  */
 async function addTask(name, desc, day) {
   let task = {};
@@ -116,20 +115,23 @@ async function addTask(name, desc, day) {
     await writePlanner(planner);
     return planner;
   } catch (err) {
-    response.status(500).send(err);
+
   }
 }
 
 /**
  * Helper function to read the planner file into a JSON object
- * @returns a JSON object of the planner
+ * @returns {json} - a JSON object of the planner
  */
 async function readPlanner() {
   let planner = await fs.readFile("planner.txt", "utf-8");
   return JSON.parse(planner);
 }
 
-/** Helper function to overwrite the planner file with the given JSON object */
+/**
+ * Helper function to overwrite the planner file with the given JSON object
+ * @param {json} planner - the planner object to write to file
+ */
 async function writePlanner(planner) {
   fs.writeFile("planner.txt", JSON.stringify(planner));
 }

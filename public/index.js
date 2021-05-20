@@ -43,9 +43,7 @@
    */
   function addTask() {
     let name = id("task-name").value;
-    /* if (!name && !isRandomTask()) {
-      displayStatusBox("Task name cannot be empty!", 3000);
-    } else */ if (isRandomTask()) {
+    if (isRandomTask()) {
       let maxDifficulty = id("difficulty-slider").value;
       let maxPrice = id("price-slider").value;
       let category = id("category").value;
@@ -251,9 +249,9 @@
   }
 
   /** Toggles the submit button's enable/disable */
-    function toggleSubmit() {
-      id("task-submit").disabled = !id("task-submit").disabled;
-    }
+  function toggleSubmit() {
+    id("task-submit").disabled = !id("task-submit").disabled;
+  }
 
   /** Toggles the status box visibility */
   function toggleStatusBox() {
