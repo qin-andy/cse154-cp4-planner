@@ -99,7 +99,6 @@
     }
   }
 
-
   /**
    * Builds the structure in the DOM for a new task in HTML.
    * @param {string} name - the name of the task

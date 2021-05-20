@@ -19,11 +19,24 @@ app.get('/tasks/get', async (request, response) => {
   }
 })
 
+app.get('/list', async (request, response) => {
+  try {
+    let planner = await readPlanner();
+    let list = "";
+    for (let i = 0; i < planner.tasks.length; i++) {
+      list += planner.tasks[i].name + "\n";
+    }
+    return list;
+  } catch (err) {
+    console.log(err);
+  }
+})
+
 app.get('/tasks/clearall', async (request, response) => {
   try {
     let planner = await readPlanner()
     planner.tasks = [];
-    await fs.writeFile("planner.txt", JSON.stringify(planner))
+    await writePlanner(planner);
     response.json(planner);
   } catch (err) {
     console.log(err);
@@ -51,7 +64,7 @@ async function addTask(name, desc, day) {
   try {
     let planner = await readPlanner();
     planner.tasks.push(task);
-    await fs.writeFile("planner.txt", JSON.stringify(planner));
+    await writePlanner(planner);
     return planner;
   } catch (err) {
     console.log(err);
@@ -63,6 +76,9 @@ async function readPlanner() {
   return JSON.parse(planner);
 }
 
+async function writePlanner(planner) {
+  fs.writeFile("planner.txt", JSON.stringify(planner));
+}
 
 app.use(express.static("public"));
 const PORT = process.env.PORT || 8000;
