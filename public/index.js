@@ -60,6 +60,7 @@
   /** Clears all stored tasks on the server by making a get request */
   function clearServerTasks() {
     fetch("/tasks/clearall")
+      .then(res => res.json())
       .then(updateView)
       .catch(handleError);
   }
@@ -98,11 +99,13 @@
    */
   function updateView(json) {
     clearTaskView();
+    console.log(json);
     for (let i = 0; i < json.tasks.length; i++) {
       let name = json.tasks[i].name;
       let desc = json.tasks[i].desc;
       let day = json.tasks[i].day;
-      buildCustomTask(name, desc, day);
+      let uid = json.tasks[i].uid;
+      buildCustomTask(name, desc, day, uid);
     }
   }
 
@@ -111,6 +114,7 @@
     for (let i = 0; i < allTasks.length; i++) {
       allTasks[i].remove();
     }
+    allTasks = [];
   }
 
   /**
@@ -118,9 +122,11 @@
    * @param {string} name - the name of the task
    * @param {string} desc - a short description of the task
    * @param {string} day - the day of week to add the task
+   * @param {int} uid - the uid of the task to add
    */
-  function buildCustomTask(name, desc, day) {
+  function buildCustomTask(name, desc, day, uid) {
     let newTask = gen("div");
+    newTask.id = uid;
     newTask.classList.add("task");
 
     let taskHeader = buildTaskHeader(name);
@@ -136,6 +142,11 @@
     checkButton.addEventListener("click", toggleCheck);
     newTask.appendChild(checkButton);
 
+    let clearButton = gen("button");
+    clearButton.textContent = "clear";
+    clearButton.addEventListener("click", clearTask);
+    newTask.appendChild(clearButton);
+
     id(day).appendChild(newTask);
     allTasks.push(newTask);
   }
@@ -150,6 +161,17 @@
     header.textContent = taskName;
     id("task-name").value = "";
     return header;
+  }
+
+  /** Removes a task from the task view and from the server tasks*/
+  function clearTask() {
+    let uid = this.parentNode.id;
+    this.parentNode.remove();
+    fetch("/tasks/clear?uid=" + uid)
+      .then(statusCheck)
+      .then(res => res.json())
+      .then(updateView)
+      .catch(handleError);
   }
 
   /**

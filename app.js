@@ -32,10 +32,29 @@ app.get('/list', async (request, response) => {
   }
 })
 
+app.get('/tasks/clear', async (request, response) => {
+  try {
+    let uid = request.query.uid * 1;
+    console.log(uid);
+    let planner = await readPlanner()
+    for (let i = 0; i < planner.tasks.length; i++) {
+      if (planner.tasks[i].uid === uid) {
+        console.log(planner.tasks[i]);
+        planner.tasks.splice(i, 1);
+      }
+    }
+    await writePlanner(planner);
+    response.json(planner);
+  } catch (err) {
+    console.log(err);
+  }
+})
+
 app.get('/tasks/clearall', async (request, response) => {
   try {
     let planner = await readPlanner()
     planner.tasks = [];
+    planner.idCounter = 0;
     await writePlanner(planner);
     response.json(planner);
   } catch (err) {
@@ -63,6 +82,8 @@ async function addTask(name, desc, day) {
   task['day'] = day;
   try {
     let planner = await readPlanner();
+    task['uid'] = planner.idCounter;
+    planner.idCounter = planner.idCounter + 1;
     planner.tasks.push(task);
     await writePlanner(planner);
     return planner;
