@@ -15,7 +15,7 @@ app.get('/tasks/get', async (request, response) => {
     let planner = await readPlanner();
     response.json(planner);
   } catch (err) {
-    console.log(err);
+    response.status(500).send(err);
   }
 })
 
@@ -28,19 +28,17 @@ app.get('/list', async (request, response) => {
     }
     return list;
   } catch (err) {
-    console.log(err);
+    response.status(500).send(err);
   }
 })
 
 app.get('/tasks/clear', async (request, response) => {
   try {
     let uid = request.query.uid * 1;
-    console.log(uid);
     let planner = await readPlanner()
     let oldLength = planner.tasks.length;
     for (let i = 0; i < planner.tasks.length; i++) {
       if (planner.tasks[i].uid === uid) {
-        console.log(planner.tasks[i]);
         planner.tasks.splice(i, 1);
         i -= 1;
       }
@@ -52,7 +50,7 @@ app.get('/tasks/clear', async (request, response) => {
       response.json(planner);
     }
   } catch (err) {
-    console.log(err);
+    response.status(500).send(err);
   }
 })
 
@@ -64,12 +62,11 @@ app.get('/tasks/clearall', async (request, response) => {
     await writePlanner(planner);
     response.json(planner);
   } catch (err) {
-    console.log(err);
+    response.status(500).send(err);
   }
 })
 
 app.post('/tasks/add', async (request, response) => {
-  console.log(request.body);
   let name = request.body.name;
   let desc = request.body.desc;
   let day = request.body.day;
@@ -81,7 +78,7 @@ app.post('/tasks/add', async (request, response) => {
       let planner = await addTask(name, desc, day);
       response.json(planner);
     } catch (err) {
-      console.log(err);
+      response.status(500).send(err);
     }
   }
 })
@@ -99,7 +96,7 @@ async function addTask(name, desc, day) {
     await writePlanner(planner);
     return planner;
   } catch (err) {
-    console.log(err);
+    response.status(500).send(err);
   }
 }
 
