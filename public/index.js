@@ -38,7 +38,8 @@
   }
 
   /**
-   * Adds a new task using the task manager's text inputs as fields.
+   * Begins adding a new task using the task manager's text inputs as fields.
+   * Will eventually make a request to the server to update the planner.
    */
   function addTask() {
     let name = id("task-name").value;
@@ -56,12 +57,19 @@
     }
   }
 
+  /** Clears all stored tasks on the server by making a get request */
   function clearServerTasks() {
     fetch("/tasks/clearall")
       .then(updateView)
       .catch(handleError);
   }
 
+  /**
+   * Posts a new task to the server planner, then updates the local view to match
+   * @param {string} name - the name of the task
+   * @param {string} desc - the task description
+   * @param {string} day - the task day of the week
+   */
   function postCustomTask(name, desc, day) {
     let params = new FormData();
     params.append("name", name);
@@ -75,6 +83,7 @@
       .catch(handleError);
   }
 
+  /** Refreshes and updates the local planner by fetching the stored tasks on the server */
   function refreshPlanner() {
     fetch("/tasks/get")
       .then(statusCheck)
@@ -83,6 +92,10 @@
       .catch(handleError);
   }
 
+  /**
+   * Updates the local planner view according to a given planner json wth task list
+   * @param {json} json - the planner json conntaining the list of tasks
+   */
   function updateView(json) {
     clearTaskView();
     for (let i = 0; i < json.tasks.length; i++) {
@@ -93,6 +106,7 @@
     }
   }
 
+  /** Clears the local task view of all local tasks. Does not interact with server */
   function clearTaskView() {
     for (let i = 0; i < allTasks.length; i++) {
       allTasks[i].remove();
@@ -128,7 +142,7 @@
 
   /**
    * Constructs a header based on a task name
-   * @param {*} taskName - the text content of the header
+   * @param {string} taskName - the text content of the header
    * @returns {HTMLElement} - the constructed header
    */
   function buildTaskHeader(taskName) {
@@ -140,9 +154,9 @@
 
   /**
    * Constructs a random task based on the user selections and adds it to the planner
-   * @param {*} category - the type of task to fetch based on user selection
-   * @param {*} maxDifficulty - the max difficulty factor for the task, from 1-10
-   * @param {*} maxPrice - the max price range for the task, from 1-10
+   * @param {string} category - the type of task to fetch based on user selection
+   * @param {int} maxDifficulty - the max difficulty factor for the task, from 1-10
+   * @param {int} maxPrice - the max price range for the task, from 1-10
    */
   function postRandomTask(category, maxDifficulty, maxPrice) {
     maxDifficulty /= 10;
@@ -157,8 +171,8 @@
    * Makes an API request from BoredAPI based on the random task settings. Displays an error if
    * the request fails in some way.
    * @param {string} category - the type of activity to fetch. If none is given, chooses randomly
-   * @param {*} maxDifficulty - the max difficulty, selects an activity in the range of 0 to max
-   * @param {*} maxPrice - the max price, selects an activity in the range of 0 to max
+   * @param {int} maxDifficulty - the max difficulty, selects an activity in the range of 0 to max
+   * @param {int} maxPrice - the max price, selects an activity in the range of 0 to max
    */
   function makeActivityRequest(category, maxDifficulty, maxPrice) {
     const url = "http://www.boredapi.com/api/activity/" + // TOOD: constant this?
