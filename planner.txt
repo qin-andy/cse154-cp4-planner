@@ -1,1 +1,1 @@
-{"idCounter":0,"tasks":[]}
+{"idCounter":1,"tasks":[{"name":"Wash Dishes","desc":"Wash dishes before dinner","day":"thursday","uid":0}]}

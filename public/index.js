@@ -86,7 +86,7 @@
 
   /** Refreshes and updates the local planner by fetching the stored tasks on the server */
   function refreshPlanner() {
-    fetch("/tasks/get")
+    fetch("/planner")
       .then(statusCheck)
       .then(res => res.json())
       .then(updateView)
@@ -99,7 +99,6 @@
    */
   function updateView(json) {
     clearTaskView();
-    console.log(json);
     for (let i = 0; i < json.tasks.length; i++) {
       let name = json.tasks[i].name;
       let desc = json.tasks[i].desc;
@@ -167,7 +166,7 @@
   function clearTask() {
     let uid = this.parentNode.id;
     this.parentNode.remove();
-    fetch("/tasks/clear?uid=" + uid)
+    fetch("/tasks/clear/" + uid)
       .then(statusCheck)
       .then(res => res.json())
       .then(updateView)

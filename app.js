@@ -10,7 +10,9 @@ app.use(express.urlencoded({ extended: true })) // for application/x-www-form-ur
 app.use(express.json()); // for application/json
 app.use(multer().none()); // for multipart/form-data (required with FormData)
 
-app.get('/tasks/get', async (request, response) => {
+
+/** Endpoint to get the full planner file as a JSON */
+app.get('/planner', async (request, response) => {
   try {
     let planner = await readPlanner();
     response.json(planner);
@@ -19,6 +21,7 @@ app.get('/tasks/get', async (request, response) => {
   }
 })
 
+/** Endpoint to lists all current tasks in the planner as TEXT, one task on each line */
 app.get('/list', async (request, response) => {
   try {
     let planner = await readPlanner();
@@ -26,15 +29,20 @@ app.get('/list', async (request, response) => {
     for (let i = 0; i < planner.tasks.length; i++) {
       list += planner.tasks[i].name + "\n";
     }
-    return list;
+    console.log(list);
+    response.type("text").send(list);
   } catch (err) {
     response.status(500).send(err);
   }
 })
 
-app.get('/tasks/clear', async (request, response) => {
+/**
+ * Endpoint to clear a specific task in the planner by uid
+ * Error if the given uid is not found in the planner
+ */
+app.get('/tasks/clear/:uid', async (request, response) => {
   try {
-    let uid = request.query.uid * 1;
+    let uid = Number.parseInt(request.params.uid);
     let planner = await readPlanner()
     let oldLength = planner.tasks.length;
     for (let i = 0; i < planner.tasks.length; i++) {
@@ -44,7 +52,7 @@ app.get('/tasks/clear', async (request, response) => {
       }
     }
     if (oldLength === planner.tasks.length) {
-      response.status(400).send("Error: uid not found");
+      response.status(400).type("text").send("Error: uid not found: " + uid);
     } else {
       await writePlanner(planner);
       response.json(planner);
@@ -54,6 +62,7 @@ app.get('/tasks/clear', async (request, response) => {
   }
 })
 
+/** Endpoint to clears all tasks from the planner file */
 app.get('/tasks/clearall', async (request, response) => {
   try {
     let planner = await readPlanner()
@@ -66,6 +75,10 @@ app.get('/tasks/clearall', async (request, response) => {
   }
 })
 
+/**
+ * Endpoint to add a specific tsak with the name, desc, and day paramters in the body
+ * Responds with an error if any of the paramters are missing or invalid
+ */
 app.post('/tasks/add', async (request, response) => {
   let name = request.body.name;
   let desc = request.body.desc;
@@ -83,6 +96,13 @@ app.post('/tasks/add', async (request, response) => {
   }
 })
 
+/**
+ * Reads and writes the planner file to include this new task, returns it as a JSON
+ * @param {string} name - the task name
+ * @param {string} desc - the task description
+ * @param {string} day - the task day of week
+ * @returns - a json file of the updated planner
+ */
 async function addTask(name, desc, day) {
   let task = {};
   task['name'] = name;
@@ -100,11 +120,16 @@ async function addTask(name, desc, day) {
   }
 }
 
+/**
+ * Helper function to read the planner file into a JSON object
+ * @returns a JSON object of the planner
+ */
 async function readPlanner() {
   let planner = await fs.readFile("planner.txt", "utf-8");
   return JSON.parse(planner);
 }
 
+/** Helper function to overwrite the planner file with the given JSON object */
 async function writePlanner(planner) {
   fs.writeFile("planner.txt", JSON.stringify(planner));
 }
