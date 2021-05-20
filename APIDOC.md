@@ -1,5 +1,5 @@
-# *FILL IN NAME* API Documentation
-*Fill in a short description here about the API's purpose.*
+# Persistent Planner API Documentation
+Interact with the persistent planner by adding or removing tasks, which reads and writes the local file accordingly.
 
 ## Get full planner object
 **Request Format:** /planner

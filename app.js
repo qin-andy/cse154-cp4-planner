@@ -1,3 +1,13 @@
+/**
+ * Name: Andy Qin
+ * Date: 5.20.2021
+ * Section: CSE 154 AE
+ *
+ * The app.js file for the backend server to handling requests to interact with
+ * tasks and store them persistently. Contains functionality to fetch entire planner,
+ * clear specific tasks, clear the entire planner, add new tasks, and to list all tasks.
+ */
+
 "use strict";
 
 const express = require('express');
@@ -6,7 +16,7 @@ const fs = require('fs').promises;
 const app = express();
 
 /* Include middlewares for handling POST requests */
-app.use(express.urlencoded({ extended: true })); // for application/x-www-form-urlencoded
+app.use(express.urlencoded({extended: true})); // for application/x-www-form-urlencoded
 app.use(express.json()); // for application/json
 app.use(multer().none()); // for multipart/form-data (required with FormData)
 
@@ -18,7 +28,7 @@ app.get('/planner', async (request, response) => {
   } catch (err) {
     response.status(500).send(err);
   }
-})
+});
 
 /** Endpoint to lists all current tasks in the planner as TEXT, one task on each line */
 app.get('/list', async (request, response) => {
@@ -28,7 +38,6 @@ app.get('/list', async (request, response) => {
     for (let i = 0; i < planner.tasks.length; i++) {
       list += planner.tasks[i].name + "\n";
     }
-    console.log(list);
     response.type("text").send(list);
   } catch (err) {
     response.status(500).send(err);
@@ -51,7 +60,8 @@ app.get('/tasks/clear/:uid', async (request, response) => {
       }
     }
     if (oldLength === planner.tasks.length) {
-      response.status(400).type("text").send("Error: uid not found: " + uid);
+      response.status(400).type("text")
+        .send("Error: uid not found: " + uid);
     } else {
       await writePlanner(planner);
       response.json(planner);
@@ -115,7 +125,7 @@ async function addTask(name, desc, day) {
     await writePlanner(planner);
     return planner;
   } catch (err) {
-
+    return "error";
   }
 }
 
@@ -133,7 +143,7 @@ async function readPlanner() {
  * @param {json} planner - the planner object to write to file
  */
 async function writePlanner(planner) {
-  fs.writeFile("planner.txt", JSON.stringify(planner));
+  await fs.writeFile("planner.txt", JSON.stringify(planner));
 }
 
 app.use(express.static("public"));

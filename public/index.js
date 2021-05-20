@@ -1,17 +1,19 @@
 /**
  * Name: Andy Qin
- * Date: 5.5.2021
+ * Date: 5.20.2021
  * Section: CSE 154 AE
  *
  * The main javascript file for the plain and simple planner. Includes
  * functionality to add both custom and random tasks, with the random
  * tasks sourced from BoredAPI (see footer). Dynamically adjusts
  * the planner on the html page with tasks as specified by the user.
+ * Tasks stored and managed on the server and remain persistent between
+ * multiple sessions.
  */
 
 "use strict";
 
-(function () {
+(function() {
   window.addEventListener("load", init);
   let allTasks = [];
 
@@ -75,7 +77,7 @@
     params.append("desc", desc);
     params.append("day", day);
 
-    fetch("/tasks/add", { method: "POST", body: params })
+    fetch("/tasks/add", {method: "POST", body: params})
       .then(statusCheck)
       .then(res => res.json())
       .then(updateView)
