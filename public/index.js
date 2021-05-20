@@ -63,13 +63,12 @@
    * @param {string} name - the name of the task
    * @param {string} desc - a short description of the task
    * @param {string} day - the day of week to add the task
-   * @param {string} link - the link for the task header, optional
    */
-  function buildCustomTask(name, desc, day, link) {
+  function buildCustomTask(name, desc, day) {
     let newTask = gen("div");
     newTask.classList.add("task");
 
-    let taskHeader = buildTaskHeader(name, link);
+    let taskHeader = buildTaskHeader(name);
     newTask.appendChild(taskHeader);
 
     let taskDesc = gen("p");
@@ -90,21 +89,13 @@
   }
 
   /**
-   * Constructs a header based on a task name. If given a link, adds a hyperlink as well.
+   * Constructs a header based on a task name
    * @param {*} taskName - the text content of the header
-   * @param {*} link - the hyperlink of the header. If empty, doesn't add any hyperlink.
    * @returns {HTMLElement} - the constructed header
    */
-  function buildTaskHeader(taskName, link) {
+  function buildTaskHeader(taskName) {
     let header = gen("h3");
-    if (link !== "" && link !== undefined) {
-      let hyperlink = gen("a");
-      hyperlink.href = link;
-      hyperlink.textContent = taskName;
-      header.appendChild(hyperlink);
-    } else {
-      header.textContent = taskName;
-    }
+    header.textContent = taskName;
     id("task-name").value = "";
     return header;
   }
@@ -161,8 +152,7 @@
   function processActivityJson(respJson) {
     let name = respJson.activity;
     let desc = respJson.type;
-    let link = respJson.link;
-    buildCustomTask(name, desc, getDay(), link);
+    buildCustomTask(name, desc, getDay());
     setTimeout(toggleSubmit, 500);
   }
 
