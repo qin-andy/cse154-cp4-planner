@@ -71,6 +71,14 @@ app.get('/tasks/clear/:uid', async (request, response) => {
   }
 });
 
+app.get('/q3/:foo', function(req,res) {
+  let foo = req.query.bar;
+  let bar = req.query.baz;
+  let baz = req.params.foo;
+  res.type('text')
+     .send('baz: ' + foo + ', bar: ' + baz + ', foo: ' + bar);
+});
+
 /** Endpoint to clears all tasks from the planner file */
 app.get('/tasks/clearall', async (request, response) => {
   try {
